@@ -2,9 +2,9 @@
 #include "FreeRTOSTask.h"
 #include "Delay.h"
 #include "Serial.h"
-#include "LED.h"
 #include "ESP8266.h"
-#include "string.h"
+#include "LED.h"
+#include "Key.h"
 
 int main(void)
 {
@@ -12,41 +12,22 @@ int main(void)
 	ESP8266_Init();
 	LED_Init();
 
-	if (ESP8266_SetCWMODE(STA))
+	if (ESP8266_ConnServer("HUAWEI-CR151S", "alt134679", "mqttx_20040903", NULL, NULL, "192.168.3.93", 1883))
 	{
-		if (ESP8266_SetCWJAP("HUAWEI-CR151S", "alt134679"))
-		{
-			ESP8266_GetCIFSR();
-			if (ESP8266_MQTTUSERCFG("mqttx_20040903", "", ""))
-			{
-				if (ESP8266_MQTTCONN("192.168.3.90", 1883))
-				{
-					Serial_Printf("MQTTCONN OK\r\n");
-					if (ESP8266_MQTTSUB("test", 0))
-					{
-						Serial_Printf("MQTTSUB OK\r\n");
-					}
-					else
-					{
-						Serial_Printf("MQTTSUB ERROR\r\n");
-					}
-				}
-				else
-				{
-					Serial_Printf("MQTTCONN ERROR\r\n");
-				}
-			}
-		}
+		ESP8266_MQTTSUB("test", 0);
 	}
-	else
-	{
-		Serial_Printf("SetCWMODE ERROR\r\n");
-	}
+
+	ESP8266_PrintfLog();
 
 	while (1)
 	{
 		LEDB_Turn();
 		ESP8266_PrintfLog();
+
+		if (Key1_GetState() == 1)
+		{
+			ESP8266_MQTTCLEAN();
+		}
 
 		Delay_ms(2000);
 	}

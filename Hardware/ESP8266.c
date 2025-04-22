@@ -187,6 +187,51 @@ bool ESP8266_MQTTCLEAN(void)
     return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
 }
 
+// 以下为业务函数
+
+bool ESP8266_ConnServer(char *SSID, char *PASSWORD, char *ClientID, char *UserName, char *PassWord, char *BrokerIP, uint16_t Port)
+{
+    if (!ESP8266_SetCWMODE(STA))
+    {
+        Serial_Printf("SetCWMODE ERROR\r\n");
+        return false;
+    }
+
+    if (!ESP8266_SetCWJAP(SSID, PASSWORD))
+    {
+        Serial_Printf("SetCWJAP ERROR\r\n");
+        return false;
+    }
+
+    ESP8266_GetCIFSR();
+
+    if (!ESP8266_MQTTUSERCFG(ClientID, UserName, PassWord))
+    {
+        Serial_Printf("MQTTUSERCFG ERROR\r\n");
+        return false;
+    }
+
+    if (!ESP8266_MQTTCONN(BrokerIP, Port))
+    {
+        Serial_Printf("MQTTCONN ERROR\r\n");
+        return false;
+    }
+
+    Serial_Printf("MQTTCONN OK\r\n");
+
+    return true;
+}
+
+bool ESP8266_DataSend(void)
+{
+    return true;
+}
+
+bool ESP8266_DataRecv(void)
+{
+    return true;
+}
+
 void USART3_IRQHandler(void)
 {
     uint8_t ch;
