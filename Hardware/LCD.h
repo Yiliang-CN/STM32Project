@@ -1,6 +1,8 @@
 #ifndef __LCD_H
 #define __LCD_H
 
+#include "Fonts.h"
+
 // LCD总线时钟
 
 #define LCD_RCC_GPIOx RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE
@@ -109,5 +111,19 @@
 void LCD_Init(void);
 void LCD_SetScanMode(uint8_t Mode);
 void LCD_Clear(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height);
+
+// LCD文本显示
+
+void LCD_DisplayChar_EN(uint16_t X, uint16_t Y, const char Ch);
+void LCD_DisplayString_EN(uint16_t X, uint16_t Y, const char *Str);
+
+// LCD常用设置
+
+void LCD_SetFont(FONT *fonts);
+FONT *LCD_GetFont(void);
+void LCD_SetTextColor(uint16_t Color);
+void LCD_GetTextColor(uint16_t *Color);
+void LCD_SetBackColor(uint16_t Color);
+void LCD_GetBackColor(uint16_t *Color);
 
 #endif

@@ -2,32 +2,24 @@
 #include "FreeRTOSTask.h"
 #include "Delay.h"
 #include "Serial.h"
-#include "ESP8266.h"
 #include "LED.h"
+#include "LCD.h"
 #include "Key.h"
 
 int main(void)
 {
+	LCD_Init();
+
 	Serial_Init();
-	ESP8266_Init();
 	LED_Init();
 
-	if (ESP8266_ConnServer("HUAWEI-CR151S", "alt134679", "mqttx_20040903", NULL, NULL, "192.168.3.93", 1883))
-	{
-		ESP8266_MQTTSUB("test", 0);
-	}
-
-	ESP8266_PrintfLog();
+	LCD_DisplayString_EN(10, 10, "STM32F103C8T6");
 
 	while (1)
 	{
 		LEDB_Turn();
-		ESP8266_PrintfLog();
 
-		if (Key1_GetState() == 1)
-		{
-			ESP8266_MQTTCLEAN();
-		}
+		Serial_Printf("test\r\n");
 
 		Delay_ms(2000);
 	}

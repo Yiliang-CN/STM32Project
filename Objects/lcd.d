@@ -29,4 +29,5 @@
 .\objects\lcd.o: .\Library\inc\stm32f10x_wwdg.h
 .\objects\lcd.o: .\Library\inc\misc.h
 .\objects\lcd.o: Hardware\LCD.h
+.\objects\lcd.o: .\System\Fonts.h
 .\objects\lcd.o: .\System\Delay.h

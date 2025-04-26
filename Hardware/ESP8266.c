@@ -3,8 +3,13 @@
 #include "Delay.h"
 #include "Serial.h"
 
+// ESP8266数据帧结构体
 struct ESP8266_RxDataFrame ESP8266_Data = {0};
 
+/**
+ * @brief: ESP8266 GPIO初始化
+ * @return {*}
+ */
 static void ESP8266_GPIO_Init(void)
 {
     RCC_APB2PeriphClockCmd(ESP8266_RCC_GPIOx, ENABLE);
@@ -27,6 +32,10 @@ static void ESP8266_GPIO_Init(void)
     GPIO_Init(ESP8266_GPIOx, &GPIO_InitStructure);
 }
 
+/**
+ * @brief: ESP8266 USART初始化
+ * @return {*}
+ */
 static void ESP8266_USART_Init(void)
 {
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
@@ -53,6 +62,10 @@ static void ESP8266_USART_Init(void)
     USART_Cmd(ESP8266_USARTx, ENABLE);
 }
 
+/**
+ * @brief: ESP8266 初始化
+ * @return {*}
+ */
 void ESP8266_Init(void)
 {
     ESP8266_GPIO_Init();
@@ -63,6 +76,22 @@ void ESP8266_Init(void)
     Delay_ms(2000); // 延时等待模块完全复位
 }
 
+/**
+ * @brief: ESP8266 复位函数
+ * @return {*}
+ */
+void ESP8266_RST(void)
+{
+    ESP8266_RST_Low;
+    Delay_ms(500);
+    ESP8266_RST_High;
+}
+
+/**
+ * @brief: ESP8266 发送字符串
+ * @param {char} *String
+ * @return {*}
+ */
 static void ESP8266_SendString(char *String)
 {
     for (uint16_t i = 0; String[i] != '\0'; i++)
@@ -73,6 +102,14 @@ static void ESP8266_SendString(char *String)
     }
 }
 
+/**
+ * @brief: ESP8266 发送命令
+ * @param {char} *CMD               命令
+ * @param {char} *Reply1            回复1
+ * @param {char} *Reply2            回复2
+ * @param {uint32_t} WaitTime_ms    等待时间
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_SendCmd(char *CMD, char *Reply1, char *Reply2, uint32_t WaitTime_ms)
 {
     ESP8266_Data.DataInfo.InfoBit.FrameLength = 0;
@@ -94,6 +131,10 @@ bool ESP8266_SendCmd(char *CMD, char *Reply1, char *Reply2, uint32_t WaitTime_ms
         return ((bool)strstr(ESP8266_Data.DataBuf, Reply2));
 }
 
+/**
+ * @brief: ESP8266 打印日志
+ * @return {*}
+ */
 void ESP8266_PrintfLog(void)
 {
     if (ESP8266_Data.DataInfo.InfoBit.FrameFlag == 1)
@@ -110,13 +151,11 @@ void ESP8266_PrintfLog(void)
 
 // 以下为基础指令函数
 
-void ESP8266_RST(void)
-{
-    ESP8266_RST_Low;
-    Delay_ms(500);
-    ESP8266_RST_High;
-}
-
+/**
+ * @brief: ESP8266 设置工作模式
+ * @param {ESP8266_CWMODE} mode 工作模式 1 2 3
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_SetCWMODE(ESP8266_CWMODE mode)
 {
     switch (mode)
@@ -135,6 +174,12 @@ bool ESP8266_SetCWMODE(ESP8266_CWMODE mode)
     }
 }
 
+/**
+ * @brief: ESP8266 连接WiFi
+ * @param {char} *SSID      网络名称
+ * @param {char} *PASSWORD  网络密码
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_SetCWJAP(char *SSID, char *PASSWORD)
 {
     char CMD[128];
@@ -142,6 +187,10 @@ bool ESP8266_SetCWJAP(char *SSID, char *PASSWORD)
     return ESP8266_SendCmd(CMD, "OK", NULL, 2500);
 }
 
+/**
+ * @brief: ESP8266 获取IP信息
+ * @return {*}
+ */
 void ESP8266_GetCIFSR(void)
 {
     if (ESP8266_SendCmd("AT+CIFSR\r\n", "OK", NULL, 2500))
@@ -152,6 +201,13 @@ void ESP8266_GetCIFSR(void)
 
 // 以下为MQTT指令函数
 
+/**
+ * @brief: ESP8266 MQTT用户配置
+ * @param {char} *ClientID  客户端ID
+ * @param {char} *UserName  用户名
+ * @param {char} *PassWord  密码
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_MQTTUSERCFG(char *ClientID, char *UserName, char *PassWord)
 {
     char CMD[128];
@@ -159,6 +215,12 @@ bool ESP8266_MQTTUSERCFG(char *ClientID, char *UserName, char *PassWord)
     return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
 }
 
+/**
+ * @brief: ESP8266 MQTT连接Broker
+ * @param {char} *BrokerIP  Broker的IP地址
+ * @param {uint16_t} Port   Broker的端口号
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_MQTTCONN(char *BrokerIP, uint16_t Port)
 {
     char CMD[128];
@@ -166,6 +228,12 @@ bool ESP8266_MQTTCONN(char *BrokerIP, uint16_t Port)
     return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
 }
 
+/**
+ * @brief: ESP8266 MQTT订阅主题
+ * @param {char} *Topic     主题
+ * @param {uint8_t} Qos     Qos等级
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_MQTTSUB(char *Topic, uint8_t Qos)
 {
     char CMD[128];
@@ -173,6 +241,13 @@ bool ESP8266_MQTTSUB(char *Topic, uint8_t Qos)
     return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
 }
 
+/**
+ * @brief: ESP8266 MQTT发布主题
+ * @param {char} *Topic     主题
+ * @param {char} *Data      发布的数据
+ * @param {uint8_t} Qos     Qos等级
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_MQTTPUB(char *Topic, char *Data, uint8_t Qos)
 {
     char CMD[128];
@@ -180,6 +255,10 @@ bool ESP8266_MQTTPUB(char *Topic, char *Data, uint8_t Qos)
     return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
 }
 
+/**
+ * @brief: ESP8266 MQTT清除连接
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_MQTTCLEAN(void)
 {
     char CMD[128];
@@ -189,6 +268,17 @@ bool ESP8266_MQTTCLEAN(void)
 
 // 以下为业务函数
 
+/**
+ * @brief: ESP8266 连接服务
+ * @param {char} *SSID          网络名称
+ * @param {char} *PASSWORD      网络密码
+ * @param {char} *ClientID      客户端ID
+ * @param {char} *UserName      用户名
+ * @param {char} *PassWord      密码
+ * @param {char} *BrokerIP      Broker的IP地址
+ * @param {uint16_t} Port       Broker的端口号
+ * @return {bool} 成功 true 失败 false
+ */
 bool ESP8266_ConnServer(char *SSID, char *PASSWORD, char *ClientID, char *UserName, char *PassWord, char *BrokerIP, uint16_t Port)
 {
     if (!ESP8266_SetCWMODE(STA))
@@ -222,12 +312,20 @@ bool ESP8266_ConnServer(char *SSID, char *PASSWORD, char *ClientID, char *UserNa
     return true;
 }
 
-bool ESP8266_DataSend(void)
+/**
+ * @brief: ESP8266 发送数据
+ * @return {bool} 成功 true 失败 false
+ */
+bool ESP8266_SendData(void)
 {
     return true;
 }
 
-bool ESP8266_DataRecv(void)
+/**
+ * @brief: ESP8266 接收数据
+ * @return {bool} 成功 true 失败 false
+ */
+bool ESP8266_RecvData(void)
 {
     return true;
 }

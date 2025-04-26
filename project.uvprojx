@@ -694,6 +694,16 @@
               <FileType>5</FileType>
               <FilePath>.\System\cJSON.h</FilePath>
             </File>
+            <File>
+              <FileName>Fonts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\System\Fonts.c</FilePath>
+            </File>
+            <File>
+              <FileName>Fonts.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\System\Fonts.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

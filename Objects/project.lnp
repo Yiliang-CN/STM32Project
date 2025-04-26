@@ -29,6 +29,7 @@
 ".\objects\delay.o"
 ".\objects\rtc.o"
 ".\objects\cjson.o"
+".\objects\fonts.o"
 ".\objects\key.o"
 ".\objects\led.o"
 ".\objects\buzzer.o"

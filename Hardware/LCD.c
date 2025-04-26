@@ -7,24 +7,37 @@ uint16_t LCD_Y_LENGTH = LCD_MAX_Pixel;
 
 uint8_t LCD_SCAN_MODE = 6; // 屏幕扫描模式 0~7
 
+static FONT *LCD_TextFont = &Font8x16;
 static uint16_t LCD_TextColor = BLACK; // 默认文本颜色
 static uint16_t LCD_BackColor = WHITE; // 默认背景颜色
 
-__inline void LCD_Write_Cmd(uint16_t Cmd)
+__inline void LCD_WriteCmd(uint16_t Cmd)
 {
     *LCD_CMD_ADDR = Cmd;
 }
 
-__inline void LCD_Write_Data(uint16_t Data)
+__inline void LCD_WriteData(uint16_t Data)
 {
     *LCD_DATA_ADDR = Data;
 }
 
-__inline uint16_t LCD_Read_Data(void)
+__inline uint16_t LCD_ReadData(void)
 {
     return (*LCD_DATA_ADDR);
 }
 
+__inline void LCD_FillColor(uint32_t Pixels, uint16_t Color)
+{
+    LCD_WriteCmd(LCD_SetPixel);
+
+    for (uint32_t i = 0; i < Pixels; i++)
+        LCD_WriteData(Color);
+}
+
+/**
+ * @brief: LCD GPIO初始化
+ * @return {*}
+ */
 static void LCD_GPIO_Init(void)
 {
     RCC_APB2PeriphClockCmd(LCD_RCC_GPIOx, ENABLE);
@@ -102,6 +115,10 @@ static void LCD_GPIO_Init(void)
     GPIO_Init(LCD_GPIOx_D15, &GPIO_InitStructure);
 }
 
+/**
+ * @brief: LCD FSMC初始化
+ * @return {*}
+ */
 static void LCD_FSMC_Init(void)
 {
     RCC_AHBPeriphClockCmd(LCD_RCC_FSMC, ENABLE);
@@ -146,7 +163,12 @@ static void LCD_FSMC_Init(void)
     FSMC_NORSRAMCmd(FSMC_Bank_NORSRAMx, ENABLE);
 }
 
-static void LCD_BackLed_Control(FunctionalState enumState)
+/**
+ * @brief: LCD 背光设置
+ * @param {FunctionalState} enumState
+ * @return {*}
+ */
+static void LCD_Backlight_Config(FunctionalState enumState)
 {
     if (enumState)
         GPIO_ResetBits(LCD_GPIOx_BK, LCD_Pin_BK);
@@ -154,6 +176,10 @@ static void LCD_BackLed_Control(FunctionalState enumState)
         GPIO_SetBits(LCD_GPIOx_BK, LCD_Pin_BK);
 }
 
+/**
+ * @brief: LCD 复位
+ * @return {*}
+ */
 static void LCD_Rst(void)
 {
     GPIO_ResetBits(LCD_GPIOx_RST, LCD_Pin_RST); // 低电平复位
@@ -165,176 +191,180 @@ static void LCD_Rst(void)
     Delay_ms(50);
 }
 
+/**
+ * @brief: LCD 寄存器设置
+ * @return {*}
+ */
 static void LCD_REG_Config(void)
 {
     /*  Power control B (CFh)  */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xCF);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x81);
-    LCD_Write_Data(0x30);
+    LCD_WriteCmd(0xCF);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x81);
+    LCD_WriteData(0x30);
 
     /*  Power on sequence control (EDh) */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xED);
-    LCD_Write_Data(0x64);
-    LCD_Write_Data(0x03);
-    LCD_Write_Data(0x12);
-    LCD_Write_Data(0x81);
+    LCD_WriteCmd(0xED);
+    LCD_WriteData(0x64);
+    LCD_WriteData(0x03);
+    LCD_WriteData(0x12);
+    LCD_WriteData(0x81);
 
     /*  Driver timing control A (E8h) */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xE8);
-    LCD_Write_Data(0x85);
-    LCD_Write_Data(0x10);
-    LCD_Write_Data(0x78);
+    LCD_WriteCmd(0xE8);
+    LCD_WriteData(0x85);
+    LCD_WriteData(0x10);
+    LCD_WriteData(0x78);
 
     /*  Power control A (CBh) */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xCB);
-    LCD_Write_Data(0x39);
-    LCD_Write_Data(0x2C);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x34);
-    LCD_Write_Data(0x02);
+    LCD_WriteCmd(0xCB);
+    LCD_WriteData(0x39);
+    LCD_WriteData(0x2C);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x34);
+    LCD_WriteData(0x02);
 
     /* Pump ratio control (F7h) */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xF7);
-    LCD_Write_Data(0x20);
+    LCD_WriteCmd(0xF7);
+    LCD_WriteData(0x20);
 
     /* Driver timing control B */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xEA);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x00);
+    LCD_WriteCmd(0xEA);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x00);
 
     /* Frame Rate Control (In Normal Mode/Full Colors) (B1h) */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xB1);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x1B);
+    LCD_WriteCmd(0xB1);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x1B);
 
     /*  Display Function Control (B6h) */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xB6);
-    LCD_Write_Data(0x0A);
-    LCD_Write_Data(0xA2);
+    LCD_WriteCmd(0xB6);
+    LCD_WriteData(0x0A);
+    LCD_WriteData(0xA2);
 
     /* Power Control 1 (C0h) */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xC0);
-    LCD_Write_Data(0x35);
+    LCD_WriteCmd(0xC0);
+    LCD_WriteData(0x35);
 
     /* Power Control 2 (C1h) */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0xC1);
-    LCD_Write_Data(0x11);
+    LCD_WriteCmd(0xC1);
+    LCD_WriteData(0x11);
 
     /* VCOM Control 1 (C5h) */
-    LCD_Write_Cmd(0xC5);
-    LCD_Write_Data(0x45);
-    LCD_Write_Data(0x45);
+    LCD_WriteCmd(0xC5);
+    LCD_WriteData(0x45);
+    LCD_WriteData(0x45);
 
     /*  VCOM Control 2 (C7h)  */
-    LCD_Write_Cmd(0xC7);
-    LCD_Write_Data(0xA2);
+    LCD_WriteCmd(0xC7);
+    LCD_WriteData(0xA2);
 
     /* Enable 3G (F2h) */
-    LCD_Write_Cmd(0xF2);
-    LCD_Write_Data(0x00);
+    LCD_WriteCmd(0xF2);
+    LCD_WriteData(0x00);
 
     /* Gamma Set (26h) */
-    LCD_Write_Cmd(0x26);
-    LCD_Write_Data(0x01);
+    LCD_WriteCmd(0x26);
+    LCD_WriteData(0x01);
     // DEBUG_DELAY();
 
     /* Positive Gamma Correction */
-    LCD_Write_Cmd(0xE0); // Set Gamma
-    LCD_Write_Data(0x0F);
-    LCD_Write_Data(0x26);
-    LCD_Write_Data(0x24);
-    LCD_Write_Data(0x0B);
-    LCD_Write_Data(0x0E);
-    LCD_Write_Data(0x09);
-    LCD_Write_Data(0x54);
-    LCD_Write_Data(0xA8);
-    LCD_Write_Data(0x46);
-    LCD_Write_Data(0x0C);
-    LCD_Write_Data(0x17);
-    LCD_Write_Data(0x09);
-    LCD_Write_Data(0x0F);
-    LCD_Write_Data(0x07);
-    LCD_Write_Data(0x00);
+    LCD_WriteCmd(0xE0); // Set Gamma
+    LCD_WriteData(0x0F);
+    LCD_WriteData(0x26);
+    LCD_WriteData(0x24);
+    LCD_WriteData(0x0B);
+    LCD_WriteData(0x0E);
+    LCD_WriteData(0x09);
+    LCD_WriteData(0x54);
+    LCD_WriteData(0xA8);
+    LCD_WriteData(0x46);
+    LCD_WriteData(0x0C);
+    LCD_WriteData(0x17);
+    LCD_WriteData(0x09);
+    LCD_WriteData(0x0F);
+    LCD_WriteData(0x07);
+    LCD_WriteData(0x00);
 
     /* Negative Gamma Correction (E1h) */
-    LCD_Write_Cmd(0XE1); // Set Gamma
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x19);
-    LCD_Write_Data(0x1B);
-    LCD_Write_Data(0x04);
-    LCD_Write_Data(0x10);
-    LCD_Write_Data(0x07);
-    LCD_Write_Data(0x2A);
-    LCD_Write_Data(0x47);
-    LCD_Write_Data(0x39);
-    LCD_Write_Data(0x03);
-    LCD_Write_Data(0x06);
-    LCD_Write_Data(0x06);
-    LCD_Write_Data(0x30);
-    LCD_Write_Data(0x38);
-    LCD_Write_Data(0x0F);
+    LCD_WriteCmd(0XE1); // Set Gamma
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x19);
+    LCD_WriteData(0x1B);
+    LCD_WriteData(0x04);
+    LCD_WriteData(0x10);
+    LCD_WriteData(0x07);
+    LCD_WriteData(0x2A);
+    LCD_WriteData(0x47);
+    LCD_WriteData(0x39);
+    LCD_WriteData(0x03);
+    LCD_WriteData(0x06);
+    LCD_WriteData(0x06);
+    LCD_WriteData(0x30);
+    LCD_WriteData(0x38);
+    LCD_WriteData(0x0F);
 
     /* memory access control set */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0x36);
-    LCD_Write_Data(0xC8); /*竖屏  左上角到 (起点)到右下角 (终点)扫描方式*/
+    LCD_WriteCmd(0x36);
+    LCD_WriteData(0xC8); /*竖屏  左上角到 (起点)到右下角 (终点)扫描方式*/
     // DEBUG_DELAY();
 
     /* column address control set */
-    LCD_Write_Cmd(LCD_SetCoordinateX);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0xEF);
+    LCD_WriteCmd(LCD_SetCoordinateX);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0xEF);
 
     /* page address control set */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(LCD_SetCoordinateY);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x01);
-    LCD_Write_Data(0x3F);
+    LCD_WriteCmd(LCD_SetCoordinateY);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x01);
+    LCD_WriteData(0x3F);
 
     /*  Pixel Format Set (3Ah)  */
     // DEBUG_DELAY();
-    LCD_Write_Cmd(0x3a);
-    LCD_Write_Data(0x55);
+    LCD_WriteCmd(0x3a);
+    LCD_WriteData(0x55);
 
     /* Sleep Out (11h)  */
-    LCD_Write_Cmd(0x11);
+    LCD_WriteCmd(0x11);
     Delay_ms(50);
     // DEBUG_DELAY();
 
     /* Display ON (29h) */
-    LCD_Write_Cmd(0x29);
+    LCD_WriteCmd(0x29);
 }
 
 /*
-------------------------------------------------------------
-模式0           模式1           模式2           模式3
-            A   |   		A   |   A		    |	A
-            |   |	    	|	|   |   		|	|
-            Y   |   		X	|   Y           |	X
-            0   |	    	1	|   2		    |	3
-    <----X0 o   |   <----Y1 o	|   o 2X---->   |   o 3Y---->
-------------------------------------------------------------
+---------------------------------------------------------
+模式0       模式1           模式2           模式3
+o X0---->   |   		    |    		    |   <----3Y o
+Y           |	    	 	|       		|	        X
+0           |   		 	|               |	        3
+|           |	    	 	|    		    |	        |
+V           |           	|               |           V
+---------------------------------------------------------
 模式4           模式5           模式6           模式7
-    <----X4 o	|   <----Y5 o   |	o 6X---->   |   o 7Y---->
-            4	|			5   |	6           |   7
-            Y	|			X   |	Y           |   X
-            |	|			|   |	|           |   |
-            V	|			V   |	V           |   V
+            |   A           |	        A   |
+            |	|		    |	        |   |
+            |	5		    |	        6   |
+            |	X		    |	        Y   |
+            |	o Y5---->   |	<----6X 0   |
 ---------------------------------------------------------
     LCD屏示例
 |---------------|
@@ -347,7 +377,15 @@ static void LCD_REG_Config(void)
 |				|
 |---------------|
 屏幕正面（宽240，高320）
+
+竖向推荐    模式0(logo居上) 或 模式6(logo居下)
+横向推荐    模式3(logo居左) 或 模式5(logo居右)
 */
+/**
+ * @brief: LCD 设置扫描模式
+ * @param {uint8_t} Mode
+ * @return {*}
+ */
 static void LCD_SetScanMode(uint8_t Mode)
 {
     if (Mode > 7)
@@ -369,34 +407,40 @@ static void LCD_SetScanMode(uint8_t Mode)
     }
 
     // 使用0x36命令参数的高3位设置GRAM扫描方向
-    LCD_Write_Cmd(0x36);
-    LCD_Write_Data(0x08 | (Mode << 5));
+    LCD_WriteCmd(0x36);
+    LCD_WriteData(0x08 | (Mode << 5));
 
     // 开窗
-    LCD_Write_Cmd(LCD_SetCoordinateX);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(((LCD_X_LENGTH - 1) >> 8) & 0xFF);
-    LCD_Write_Data((LCD_X_LENGTH - 1) & 0xFF);
+    LCD_WriteCmd(LCD_SetCoordinateX);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x00);
+    LCD_WriteData(((LCD_X_LENGTH - 1) >> 8) & 0xFF);
+    LCD_WriteData((LCD_X_LENGTH - 1) & 0xFF);
 
-    LCD_Write_Cmd(LCD_SetCoordinateY);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(0x00);
-    LCD_Write_Data(((LCD_Y_LENGTH - 1) >> 8) & 0xFF);
-    LCD_Write_Data((LCD_Y_LENGTH - 1) & 0xFF);
+    LCD_WriteCmd(LCD_SetCoordinateY);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x00);
+    LCD_WriteData(((LCD_Y_LENGTH - 1) >> 8) & 0xFF);
+    LCD_WriteData((LCD_Y_LENGTH - 1) & 0xFF);
 
-    LCD_Write_Cmd(LCD_SetPixel);
+    LCD_WriteCmd(LCD_SetPixel);
 }
 
+/**
+ * @brief: LCD 初始化
+ * @return {*}
+ */
 void LCD_Init(void)
 {
     LCD_GPIO_Init();
     LCD_FSMC_Init();
 
-    LCD_BackLed_Control(ENABLE);
+    LCD_Backlight_Config(ENABLE);
     LCD_Rst();
     LCD_REG_Config();
-    LCD_SetScanMode(6);
+    LCD_SetScanMode(0);
+
+    LCD_Clear(0, 0, LCD_X_LENGTH, LCD_Y_LENGTH);
 }
 
 /**
@@ -407,36 +451,121 @@ void LCD_Init(void)
  * @param {uint16_t} Height 高度
  * @return {*}
  */
-void LCD_OpenWindow(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height)
+static void LCD_OpenWindow(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height)
 {
-    LCD_Write_Cmd(LCD_SetCoordinateX);
-    LCD_Write_Data(X >> 8);
-    LCD_Write_Data(X & 0xFF);
-    LCD_Write_Data((X + Width - 1) >> 8);
-    LCD_Write_Data((X + Width - 1) & 0xFF);
+    LCD_WriteCmd(LCD_SetCoordinateX);
+    LCD_WriteData(X >> 8);
+    LCD_WriteData(X & 0xFF);
+    LCD_WriteData((X + Width - 1) >> 8);
+    LCD_WriteData((X + Width - 1) & 0xFF);
 
-    LCD_Write_Cmd(LCD_SetCoordinateY);
-    LCD_Write_Data(Y >> 8);
-    LCD_Write_Data(Y & 0xFF);
-    LCD_Write_Data((Y + Height - 1) >> 8);
-    LCD_Write_Data((Y + Height - 1) & 0xFF);
+    LCD_WriteCmd(LCD_SetCoordinateY);
+    LCD_WriteData(Y >> 8);
+    LCD_WriteData(Y & 0xFF);
+    LCD_WriteData((Y + Height - 1) >> 8);
+    LCD_WriteData((Y + Height - 1) & 0xFF);
 }
 
-static __inline void LCD_FillColor(uint32_t Pixels, uint16_t Color)
-{
-    LCD_Write_Cmd(LCD_SetPixel);
-
-    for (uint32_t i = 0; i < Pixels; i++)
-        LCD_Write_Data(Color);
-}
-
+/**
+ * @brief: LCD 指定位置清屏
+ * @param {uint16_t} X          X坐标
+ * @param {uint16_t} Y          Y坐标
+ * @param {uint16_t} Width      宽度
+ * @param {uint16_t} Height     高度
+ * @return {*}
+ */
 void LCD_Clear(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height)
 {
     LCD_OpenWindow(X, Y, Width, Height);
     LCD_FillColor(Width * Height, LCD_BackColor);
 }
 
-// LCD屏幕颜色设置
+// 显示文本
+
+/**
+ * @brief: LCD 显示英文字符
+ * @param {uint16_t} X      X坐标
+ * @param {uint16_t} Y      Y坐标
+ * @param {char} Ch         字符
+ * @return {*}
+ */
+void LCD_DisplayChar_EN(uint16_t X, uint16_t Y, const char Ch)
+{
+    uint8_t ByteCount, BitCount, FontLength;
+    uint16_t RelativePositon;
+    uint8_t *Font;
+
+    RelativePositon = Ch - ' ';
+
+    FontLength = (LCD_TextFont->Width * LCD_TextFont->Height) / 8;
+
+    Font = (uint8_t *)&LCD_TextFont->table[RelativePositon * FontLength];
+
+    LCD_OpenWindow(X, Y, LCD_TextFont->Width, LCD_TextFont->Height);
+
+    LCD_WriteCmd(LCD_SetPixel);
+
+    for (ByteCount = 0; ByteCount < FontLength; ByteCount++)
+    {
+        for (BitCount = 0; BitCount < 8; BitCount++)
+        {
+            if (Font[ByteCount] & (0x80 >> BitCount))
+                LCD_WriteData(LCD_TextColor);
+            else
+                LCD_WriteData(LCD_BackColor);
+        }
+    }
+}
+
+/**
+ * @brief: LCD 显示英文字符串
+ * @param {uint16_t} X      X坐标
+ * @param {uint16_t} Y      Y坐标
+ * @param {char} *Str       字符串
+ * @return {*}
+ */
+void LCD_DisplayString_EN(uint16_t X, uint16_t Y, const char *Str)
+{
+    while (*Str != '\0')
+    {
+        if ((X - LCD_X_Start + LCD_TextFont->Width) > LCD_X_LENGTH)
+        {
+            X = LCD_X_Start;
+            Y += LCD_TextFont->Height;
+        }
+
+        if ((Y - LCD_Y_Start + LCD_TextFont->Height) > LCD_Y_LENGTH)
+        {
+            X = LCD_X_Start;
+            Y = LCD_Y_Start;
+        }
+
+        LCD_DisplayChar_EN(X, Y, *Str++);
+        X += LCD_TextFont->Width;
+    }
+}
+
+// LCD常用设置
+
+/**
+ * @brief: 设置英文字体类型
+ * @param {FONT} *fonts     字体规格
+ *      @arg  Font8x16
+ * @return {*}
+ */
+void LCD_SetFont(FONT *fonts)
+{
+    LCD_TextFont = fonts;
+}
+
+/**
+ * @brief: 获取当前字体类型
+ * @return {FONT}   当前字体类型
+ */
+FONT *LCD_GetFont(void)
+{
+    return LCD_TextFont;
+}
 
 /**
  * @brief: 设置LCD文本颜色
@@ -449,16 +578,6 @@ void LCD_SetTextColor(uint16_t Color)
 }
 
 /**
- * @brief: 设置LCD背景颜色
- * @param {uint16_t} Color  背景颜色
- * @return {*}
- */
-void LCD_SetBackColor(uint16_t Color)
-{
-    LCD_BackColor = Color;
-}
-
-/**
  * @brief: 获取LCD文本颜色
  * @param {uint16_t} *Color
  * @return {*}
@@ -466,6 +585,16 @@ void LCD_SetBackColor(uint16_t Color)
 void LCD_GetTextColor(uint16_t *Color)
 {
     *Color = LCD_TextColor;
+}
+
+/**
+ * @brief: 设置LCD背景颜色
+ * @param {uint16_t} Color  背景颜色
+ * @return {*}
+ */
+void LCD_SetBackColor(uint16_t Color)
+{
+    LCD_BackColor = Color;
 }
 
 /**

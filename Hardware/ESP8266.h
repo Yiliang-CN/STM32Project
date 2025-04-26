@@ -74,5 +74,7 @@ bool ESP8266_MQTTPUB(char *Topic, char *Data, uint8_t Qos);
 bool ESP8266_MQTTCLEAN(void);
 
 bool ESP8266_ConnServer(char *SSID, char *PASSWORD, char *ClientID, char *UserName, char *PassWord, char *BrokerIP, uint16_t Port);
+bool ESP8266_SendData(void);
+bool ESP8266_RecvData(void);
 
 #endif

@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "esp8266.h": "c"
+        "esp8266.h": "c",
+        "lcd.h": "c",
+        "fonts.h": "c"
     }
 }
