@@ -2,6 +2,7 @@
     "files.associations": {
         "esp8266.h": "c",
         "lcd.h": "c",
-        "fonts.h": "c"
+        "fonts.h": "c",
+        "freertostask.h": "c"
     }
 }

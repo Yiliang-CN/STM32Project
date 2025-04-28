@@ -1,7 +1,5 @@
 #include "stm32f10x.h" // Device header
 #include "Key.h"
-#include "FreeRTOSTask.h"
-#include "Delay.h"
 
 #if KEY_INTERRUPTS_MODE
 // 这里写中断需要的头文件
@@ -19,16 +17,14 @@ static void Key_GPIO_Init(void)
 
 	// 按键一初始化
 	GPIO_InitTypeDef GPIO_InitStructure_Key1;
-	GPIO_InitStructure_Key1.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure_Key1.GPIO_Mode = GPIO_Mode_IN_FLOATING; // 已外部下拉 可设置浮空输入
 	GPIO_InitStructure_Key1.GPIO_Pin = Key1_Pin;
-	GPIO_InitStructure_Key1.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(Key1_GPIOx, &GPIO_InitStructure_Key1);
 
 	// 按键二初始化
 	GPIO_InitTypeDef GPIO_InitStructure_Key2;
-	GPIO_InitStructure_Key2.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure_Key2.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure_Key2.GPIO_Pin = Key2_Pin;
-	GPIO_InitStructure_Key2.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(Key2_GPIOx, &GPIO_InitStructure_Key2);
 }
 
@@ -102,19 +98,9 @@ uint8_t Key1_GetState(void)
 
 	if (GPIO_ReadInputDataBit(Key1_GPIOx, Key1_Pin) == 1)
 	{
-
-		if (isUseTask)
-			vTaskDelay(pdMS_TO_TICKS(20)); // 延时20ms
-		else
-			Delay_ms(20);
-
+		// 有硬件消抖 可免去软件消抖
 		while (GPIO_ReadInputDataBit(Key1_GPIOx, Key1_Pin) == 1)
 			;
-
-		if (isUseTask)
-			vTaskDelay(pdMS_TO_TICKS(20)); // 延时20ms
-		else
-			Delay_ms(20);
 
 		Key_State = 1;
 	}
@@ -132,18 +118,9 @@ uint8_t Key2_GetState(void)
 
 	if (GPIO_ReadInputDataBit(Key2_GPIOx, Key2_Pin) == 1)
 	{
-		if (isUseTask)
-			vTaskDelay(pdMS_TO_TICKS(20)); // 延时20ms
-		else
-			Delay_ms(20);
-
+		// 有硬件消抖 可免去软件消抖
 		while (GPIO_ReadInputDataBit(Key2_GPIOx, Key2_Pin) == 1)
 			;
-
-		if (isUseTask)
-			vTaskDelay(pdMS_TO_TICKS(20)); // 延时20ms
-		else
-			Delay_ms(20);
 
 		Key_State = 1;
 	}

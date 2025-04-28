@@ -769,7 +769,7 @@ I (.\FreeRTOS\include\list.h)(0x674FB93E)
 I (.\Hardware\Serial.h)(0x68037084)
 I (D:\Keil5\ARM\ARMCC\include\stdio.h)(0x5D9B348A)
 I (D:\Keil5\ARM\ARMCC\include\stdarg.h)(0x5D9B348A)
-I (.\Hardware\Key.h)(0x67F65CC5)
+I (.\Hardware\Key.h)(0x680F7B33)
 I (.\Hardware\LED.h)(0x67F65E6C)
 I (.\Hardware\Buzzer.h)(0x67F65EA0)
 I (.\Hardware\MPU6050.h)(0x67EB46C4)
@@ -878,7 +878,7 @@ I (.\Library\inc\stm32f10x_wwdg.h)(0x61605446)
 I (.\Library\inc\misc.h)(0x61605446)
 I (System\Fonts.h)(0x680CA096)
 F (.\System\Fonts.h)(0x680CA096)()
-F (.\Hardware\Key.c)(0x67F65D5E)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O1 --apcs=interwork --split_sections -I .\Start -I .\Library\inc -I .\Library\src -I .\System -I .\User -I .\Hardware -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM3 -I .\FreeRTOS --no-multibyte-chars-ID:\Keil5\Keil\STM32F1xx_DFP\1.0.5\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o .\objects\key.o --omf_browse .\objects\key.crf --depend .\objects\key.d)
+F (.\Hardware\Key.c)(0x680F7885)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O1 --apcs=interwork --split_sections -I .\Start -I .\Library\inc -I .\Library\src -I .\System -I .\User -I .\Hardware -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM3 -I .\FreeRTOS --no-multibyte-chars-ID:\Keil5\Keil\STM32F1xx_DFP\1.0.5\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o .\objects\key.o --omf_browse .\objects\key.crf --depend .\objects\key.d)
 I (.\Start\stm32f10x.h)(0x61605446)
 I (.\Start\core_cm3.h)(0x61605446)
 I (D:\Keil5\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
@@ -907,20 +907,8 @@ I (.\Library\inc\stm32f10x_tim.h)(0x61605446)
 I (.\Library\inc\stm32f10x_usart.h)(0x61605446)
 I (.\Library\inc\stm32f10x_wwdg.h)(0x61605446)
 I (.\Library\inc\misc.h)(0x61605446)
-I (Hardware\Key.h)(0x67F65CC5)
-I (.\System\FreeRTOSTask.h)(0x67EFCCC0)
-I (.\FreeRTOS\include\FreeRTOS.h)(0x674FB93E)
-I (D:\Keil5\ARM\ARMCC\include\stddef.h)(0x5D9B3488)
-I (.\FreeRTOS\FreeRTOSConfig.h)(0x675A612C)
-I (.\FreeRTOS\include\projdefs.h)(0x674FB93E)
-I (.\FreeRTOS\include\portable.h)(0x674FB93E)
-I (.\FreeRTOS\include\deprecated_definitions.h)(0x674FB93E)
-I (.\FreeRTOS\portable\RVDS\ARM_CM3\portmacro.h)(0x674FB954)
-I (.\FreeRTOS\include\mpu_wrappers.h)(0x674FB93F)
-I (.\FreeRTOS\include\task.h)(0x674FB93E)
-I (.\FreeRTOS\include\list.h)(0x674FB93E)
-I (.\System\Delay.h)(0x673DFE1A)
-F (.\Hardware\Key.h)(0x67F65CC5)()
+I (Hardware\Key.h)(0x680F7B33)
+F (.\Hardware\Key.h)(0x680F7B33)()
 F (.\Hardware\LED.c)(0x67F65E5A)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O1 --apcs=interwork --split_sections -I .\Start -I .\Library\inc -I .\Library\src -I .\System -I .\User -I .\Hardware -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM3 -I .\FreeRTOS --no-multibyte-chars-ID:\Keil5\Keil\STM32F1xx_DFP\1.0.5\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o .\objects\led.o --omf_browse .\objects\led.crf --depend .\objects\led.d)
 I (.\Start\stm32f10x.h)(0x61605446)
 I (.\Start\core_cm3.h)(0x61605446)
@@ -1244,7 +1232,7 @@ I (Hardware\LCD.h)(0x680CA916)
 I (.\System\Fonts.h)(0x680CA096)
 I (.\System\Delay.h)(0x673DFE1A)
 F (.\Hardware\LCD.h)(0x680CA916)()
-F (.\User\main.c)(0x680CABC5)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O1 --apcs=interwork --split_sections -I .\Start -I .\Library\inc -I .\Library\src -I .\System -I .\User -I .\Hardware -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM3 -I .\FreeRTOS --no-multibyte-chars-ID:\Keil5\Keil\STM32F1xx_DFP\1.0.5\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\User\main.c)(0x680F7B41)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O1 --apcs=interwork --split_sections -I .\Start -I .\Library\inc -I .\Library\src -I .\System -I .\User -I .\Hardware -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM3 -I .\FreeRTOS --no-multibyte-chars-ID:\Keil5\Keil\STM32F1xx_DFP\1.0.5\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (.\Start\stm32f10x.h)(0x61605446)
 I (.\Start\core_cm3.h)(0x61605446)
 I (D:\Keil5\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
@@ -1291,7 +1279,6 @@ I (D:\Keil5\ARM\ARMCC\include\stdarg.h)(0x5D9B348A)
 I (.\Hardware\LED.h)(0x67F65E6C)
 I (.\Hardware\LCD.h)(0x680CA916)
 I (.\System\Fonts.h)(0x680CA096)
-I (.\Hardware\Key.h)(0x67F65CC5)
 F (.\User\stm32f10x_conf.h)(0x61605442)()
 F (.\User\stm32f10x_it.c)(0x675A6411)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O1 --apcs=interwork --split_sections -I .\Start -I .\Library\inc -I .\Library\src -I .\System -I .\User -I .\Hardware -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM3 -I .\FreeRTOS --no-multibyte-chars-ID:\Keil5\Keil\STM32F1xx_DFP\1.0.5\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f10x_it.o --omf_browse .\objects\stm32f10x_it.crf --depend .\objects\stm32f10x_it.d)
 I (User\stm32f10x_it.h)(0x61605444)

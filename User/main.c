@@ -4,7 +4,6 @@
 #include "Serial.h"
 #include "LED.h"
 #include "LCD.h"
-#include "Key.h"
 
 int main(void)
 {
@@ -18,8 +17,6 @@ int main(void)
 	while (1)
 	{
 		LEDB_Turn();
-
-		Serial_Printf("test\r\n");
 
 		Delay_ms(2000);
 	}

@@ -46,4 +46,3 @@
 .\objects\main.o: .\Hardware\LED.h
 .\objects\main.o: .\Hardware\LCD.h
 .\objects\main.o: .\System\Fonts.h
-.\objects\main.o: .\Hardware\Key.h
