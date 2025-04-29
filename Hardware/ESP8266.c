@@ -210,9 +210,9 @@ void ESP8266_GetCIFSR(void)
  */
 bool ESP8266_MQTTUSERCFG(char *ClientID, char *UserName, char *PassWord)
 {
-    char CMD[128];
+    char CMD[256];
     sprintf(CMD, "AT+MQTTUSERCFG=0,1,\"%s\",\"%s\",\"%s\",0,0,\"\"\r\n", ClientID, UserName, PassWord);
-    return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
+    return ESP8266_SendCmd(CMD, "OK", NULL, 2500);
 }
 
 /**
@@ -223,9 +223,9 @@ bool ESP8266_MQTTUSERCFG(char *ClientID, char *UserName, char *PassWord)
  */
 bool ESP8266_MQTTCONN(char *BrokerIP, uint16_t Port)
 {
-    char CMD[128];
+    char CMD[256];
     sprintf(CMD, "AT+MQTTCONN=0,\"%s\",%d,0\r\n", BrokerIP, Port);
-    return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
+    return ESP8266_SendCmd(CMD, "OK", NULL, 2500);
 }
 
 /**
@@ -236,9 +236,9 @@ bool ESP8266_MQTTCONN(char *BrokerIP, uint16_t Port)
  */
 bool ESP8266_MQTTSUB(char *Topic, uint8_t Qos)
 {
-    char CMD[128];
+    char CMD[256];
     sprintf(CMD, "AT+MQTTSUB=0,\"%s\",%d\r\n", Topic, Qos);
-    return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
+    return ESP8266_SendCmd(CMD, "OK", NULL, 2500);
 }
 
 /**
@@ -250,7 +250,7 @@ bool ESP8266_MQTTSUB(char *Topic, uint8_t Qos)
  */
 bool ESP8266_MQTTPUB(char *Topic, char *Data, uint8_t Qos)
 {
-    char CMD[128];
+    char CMD[256];
     sprintf(CMD, "AT+MQTTPUB=0,\"%s\",\"%s\",%d,0\r\n", Topic, Data, Qos);
     return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
 }
@@ -261,7 +261,7 @@ bool ESP8266_MQTTPUB(char *Topic, char *Data, uint8_t Qos)
  */
 bool ESP8266_MQTTCLEAN(void)
 {
-    char CMD[128];
+    char CMD[256];
     sprintf(CMD, "AT+MQTTCLEAN=0\r\n");
     return ESP8266_SendCmd(CMD, "OK", NULL, 1000);
 }

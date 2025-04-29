@@ -28,10 +28,20 @@
 
 #define ESP8266_RxDataBufSize 1024
 
-// SSID "HUAWEI-CR151S"
-// PASSWORD "alt134679"
-// IP "192.168.3.87"
-// PORT 1883
+// ESP8266 服务配置
+
+#define ESP8266_SSID "HUAWEI-CR151S"
+#define ESP8266_PASSWORD "alt134679"
+
+#define ESP8266_ClientID "Test"       // 设备名称
+#define ESP8266_UserName "1q97oLWYbU" // 产品ID
+#define ESP8266_PassWord "version=2018-10-31&res=products%2F1q97oLWYbU&et=1808994884&method=sha1&sign=%2FPeBbii3phM%2BrVG%2B5YupFkQ2JYY%3D"
+
+#define ESP8266_BrokerIP "183.230.40.96" // OneNet
+#define ESP8266_Port 1883
+
+#define ESP8266_SUBTopic "$sys/1q97oLWYbU/Test/#"
+#define ESP8266_PUBTopic "$sys/1q97oLWYbU/Test/dp/post/json"
 
 typedef enum
 {
