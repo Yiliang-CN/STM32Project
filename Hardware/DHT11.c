@@ -111,8 +111,12 @@ uint8_t DHT11_GET_Data(void)
         {
             DHT11_Data.Humi_Int = Humi_Int;
             DHT11_Data.Humi_Deci = Humi_Deci;
+            DHT11_Data.Humidity = (float)(Humi_Int + Humi_Deci / 10.0);
+
             DHT11_Data.Temp_Int = Temp_Int;
             DHT11_Data.Temp_Deci = Temp_Deci;
+            DHT11_Data.Temperature = (float)(Temp_Int + Temp_Deci / 10.0);
+            
             return 1;
         }
     }

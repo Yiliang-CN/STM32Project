@@ -112,10 +112,12 @@ void LCD_Init(void);
 void LCD_SetScanMode(uint8_t Mode);
 void LCD_Clear(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height);
 
-// LCD文本显示
+// LCD显示函数
 
-void LCD_DisplayChar_EN(uint16_t X, uint16_t Y, const char Ch);
-void LCD_DisplayString_EN(uint16_t X, uint16_t Y, const char *Str);
+void LCD_ShowChar_EN(uint16_t X, uint16_t Y, const char Ch);
+void LCD_ShowString_EN(uint16_t X, uint16_t Y, const char *Str);
+
+void LCD_ShowImage(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height, const uint8_t *Image);
 
 // LCD常用设置
 

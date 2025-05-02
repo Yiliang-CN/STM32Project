@@ -438,7 +438,7 @@ void LCD_Init(void)
     LCD_Backlight_Config(ENABLE);
     LCD_Rst();
     LCD_REG_Config();
-    LCD_SetScanMode(0);
+    LCD_SetScanMode(5);
 
     LCD_Clear(0, 0, LCD_X_LENGTH, LCD_Y_LENGTH);
 }
@@ -489,7 +489,7 @@ void LCD_Clear(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height)
  * @param {char} Ch         字符
  * @return {*}
  */
-void LCD_DisplayChar_EN(uint16_t X, uint16_t Y, const char Ch)
+void LCD_ShowChar_EN(uint16_t X, uint16_t Y, const char Ch)
 {
     uint8_t ByteCount, BitCount, FontLength;
     uint16_t RelativePositon;
@@ -524,7 +524,7 @@ void LCD_DisplayChar_EN(uint16_t X, uint16_t Y, const char Ch)
  * @param {char} *Str       字符串
  * @return {*}
  */
-void LCD_DisplayString_EN(uint16_t X, uint16_t Y, const char *Str)
+void LCD_ShowString_EN(uint16_t X, uint16_t Y, const char *Str)
 {
     while (*Str != '\0')
     {
@@ -540,8 +540,32 @@ void LCD_DisplayString_EN(uint16_t X, uint16_t Y, const char *Str)
             Y = LCD_Y_Start;
         }
 
-        LCD_DisplayChar_EN(X, Y, *Str++);
+        LCD_ShowChar_EN(X, Y, *Str++);
         X += LCD_TextFont->Width;
+    }
+}
+
+/**
+ * @brief: LCD 显示图片
+ * @param {uint16_t} X          X坐标
+ * @param {uint16_t} Y          Y坐标
+ * @param {uint16_t} Width      宽度
+ * @param {uint16_t} Height     高度
+ * @param {uint16_t} *Image     图片
+ * @return {*}
+ */
+void LCD_ShowImage(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height, const uint8_t *Image)
+{
+    LCD_OpenWindow(X, Y, Width, Height);
+    LCD_WriteCmd(LCD_SetPixel);
+
+    for (uint16_t h = 0; h < Height; h++)
+    {
+        const uint16_t *row = (const uint16_t *)(Image + h * Width * 2);
+        for (uint16_t w = 0; w < Width; w++)
+        {
+            LCD_WriteData(row[w]);
+        }
     }
 }
 

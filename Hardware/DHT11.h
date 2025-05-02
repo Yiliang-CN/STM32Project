@@ -16,17 +16,17 @@ typedef struct
 {
     uint8_t Humi_Int;  // 湿度整数
     uint8_t Humi_Deci; // 湿度小数
+    float Humidity;    //  湿度
+
     uint8_t Temp_Int;  // 温度整数
     uint8_t Temp_Deci; // 温度小数
-    uint8_t Check;     // 校验
-} DHT11_DATA;          // DHT11数据结构
+    float Temperature; // 温度
+
+    uint8_t Check; // 校验
+
+} DHT11_DATA; // DHT11数据结构
 
 extern DHT11_DATA DHT11_Data;
-
-// static void DHT11_Init_OUT(void);    // 初始化引脚为输出
-// static void DHT11_Init_IN(void);     // 初始化引脚为输入
-// static void DHT11_Start(void);       // 主机发送启动信号
-// static uint8_t DHT11_GET_Byte(void); // 获取一个字节
 
 uint8_t DHT11_GET_Data(void); // 获取数据
 
